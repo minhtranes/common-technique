@@ -2,6 +2,9 @@ package vn.ifa.study.oo;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,9 +12,12 @@ import org.springframework.stereotype.Component;
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
+import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.Result;
+import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,14 +30,25 @@ public final class ObjectStorage {
 
     private static ObjectStorageProperties props;
 
+    private static boolean bucketExists(final String bucket) {
+
+        try {
+            return minioClient().bucketExists(BucketExistsArgs.builder()
+                    .bucket(bucket)
+                    .build());
+        }
+        catch (Exception e) {
+            log.error("Failed to check bucket {} existence", bucket, e);
+        }
+
+        return false;
+    }
+
     public static boolean createBucket(final String bucket) {
 
         try {
-            boolean found = minioClient().bucketExists(BucketExistsArgs.builder()
-                    .bucket(bucket)
-                    .build());
 
-            if (found) {
+            if (bucketExists(bucket)) {
                 return true;
             }
 
@@ -76,7 +93,9 @@ public final class ObjectStorage {
             }
 
             if (os == null) {
-                object.setSmallContent(res.readAllBytes());
+                byte[] bytes = res.readAllBytes();
+                object.setSmallContent(bytes);
+                object.setSize(bytes.length);
                 return object;
             }
 
@@ -84,7 +103,52 @@ public final class ObjectStorage {
             return object;
         }
         catch (Exception e) {
-            log.error("Failed to put object {} to remote storage at bucket {}", arg.object(), arg.bucket(), e);
+            log.error("Failed to get object {} from remote storage at bucket {}", arg.object(), arg.bucket(), e);
+        }
+
+        return null;
+    }
+
+    public static List<StoredObject> listObjects(final String bucket, final String keyPrefix) {
+
+        return listObjects(bucket, keyPrefix, false);
+    }
+
+    public static List<StoredObject> listObjects(final String bucket, final String keyPrefix, final boolean recursive) {
+
+        if (!bucketExists(bucket)) {
+            return new ArrayList<>();
+        }
+
+        ListObjectsArgs arg = ListObjectsArgs.builder()
+                .bucket(bucket)
+                .prefix(keyPrefix)
+                .recursive(recursive)
+                .includeVersions(false)
+                .build();
+
+        try {
+            List<StoredObject> res = new ArrayList<>();
+            Iterable<Result<Item>> objects = minioClient().listObjects(arg);
+            Iterator<Result<Item>> it = objects.iterator();
+
+            while (it.hasNext()) {
+                Item item = it.next()
+                        .get();
+                res.add(StoredObject.builder()
+                        .bucket(bucket)
+                        .size(item.size())
+                        .key(item.objectName())
+                        .build());
+            }
+
+            return res;
+        }
+        catch (Exception e) {
+            log.error("Failed to list objects prefix {} from remote storage at bucket {}",
+                      arg.prefix(),
+                      arg.bucket(),
+                      e);
         }
 
         return null;
