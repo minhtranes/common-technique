@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
-import io.minio.GetObjectResponse;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -86,20 +86,19 @@ public final class ObjectStorage {
                 .build();
 
         try {
-            GetObjectResponse res = minioClient().getObject(arg);
 
-            if (res == null) {
-                return null;
+            try (InputStream is = minioClient().getObject(arg)) {
+
+                if (os == null) {
+                    byte[] bytes = IOUtils.toByteArray(is);
+                    object.setSmallContent(bytes);
+                    object.setSize(bytes.length);
+                } else {
+                    is.transferTo(os);
+                }
+
             }
 
-            if (os == null) {
-                byte[] bytes = res.readAllBytes();
-                object.setSmallContent(bytes);
-                object.setSize(bytes.length);
-                return object;
-            }
-
-            res.transferTo(os);
             return object;
         }
         catch (Exception e) {
