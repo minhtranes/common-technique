@@ -1,0 +1,21 @@
+object-storage:
+    endpoint:
+    clientKey:
+    clientSecret:
+    defaultBucket:
+spring:
+    cloud:
+        openfeign:
+            client:
+                config:
+                    default:
+                        connectTimeout: 5000
+                        readTimeout: 5000
+                        loggerLevel: basic
+                    fileService:
+                        url: ${FILE_SERVICE_URL:http://localhost.8290}
+                        connectTimeout: 5000
+                        readTimeout: 5000
+                        loggerLevel: full
+                        dismiss404: false
+                        micrometer.enabled: false
