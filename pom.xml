@@ -16,6 +16,7 @@
     </description>
     <properties>
         <java.version>11</java.version>
+        <libraries-pom.version>26.27.0</libraries-pom.version>
     </properties>
     <dependencies>
         <dependency>
@@ -49,7 +50,22 @@
             <version>1.32.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+        </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${libraries-pom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <distributionManagement>
         <repository>
             <id>github</id>
