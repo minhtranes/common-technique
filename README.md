@@ -89,9 +89,7 @@ Then we can use the bean `s3` in anywhere of your code by using `@Autowired` to 
 
 ```yaml
 gcs:
-    endpoint: https://minio:9000
-    clientKey: minio
-    clientSecret: minio!123
+    projectId: project-id-123
 ```
 2. Initialize the client bean
 
