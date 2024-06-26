@@ -11,6 +11,7 @@ During boot up, a single bean of this implementation.
 ### Minio Object Storage
 1. Configuration
 
+Go to `application.yml` and add following properties
 ```yaml
 minio:
     endpoint: https://minio:9000
@@ -32,6 +33,7 @@ import vn.ifa.study.oo.service.impl.OSClientBuilder;
 @Configuration
 class OSConfiguration {
 
+    @Bean
     @ConfigurationProperties(prefix = "minio")
     S3CompatibleProperties properties() {
         return new S3CompatibleProperties();
@@ -49,6 +51,7 @@ Then we can use the bean `minio` in anywhere of your code by using `@Autowired` 
 ### AWS S3
 1. Configuration
 
+Go to `application.yml` and add following properties
 ```yaml
 s3:
     endpoint: https://minio:9000
@@ -70,6 +73,7 @@ import vn.ifa.study.oo.service.impl.OSClientBuilder;
 @Configuration
 class OSConfiguration {
 
+    @Bean
     @ConfigurationProperties(prefix = "s3")
     S3CompatibleProperties properties() {
         return new S3CompatibleProperties();
@@ -114,6 +118,7 @@ import vn.ifa.study.oo.service.impl.OSClientBuilder;
 @Configuration
 class OSConfiguration {
 
+    @Bean
     @ConfigurationProperties(prefix = "gcs")
     GCSProperties properties() {
         return new GCSProperties();
