@@ -1,11 +1,14 @@
 package vn.ifa.study.oo.service.impl;
 
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import lombok.extern.slf4j.Slf4j;
 import vn.ifa.study.oo.model.StoredObject;
 import vn.ifa.study.oo.properties.GCSProperties;
 import vn.ifa.study.oo.service.OSClient;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -21,6 +24,11 @@ public class GCSObjectService implements OSClient {
 
     GCSObjectService(GCSProperties props) {
         this.props = props;
+    }
+
+    @Override
+    public boolean createBucket(final String bucket) {
+        return false;
     }
 
     @Override
@@ -40,21 +48,26 @@ public class GCSObjectService implements OSClient {
 
     @Override
     public StoredObject putObject(final StoredObject object, final InputStream is) {
+
+        try {
+            final Storage storage = StorageOptions.newBuilder()
+                                            .setProjectId(props.getProjectId())
+                                            .build()
+                                            .getService();
+            final BlobId blobId = BlobId.of(object.getBucket(), object.getKey());
+            final BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                                        .build();
+            storage.createFrom(blobInfo, is);
+            return object;
+        } catch (IOException e) {
+            log.error("Failed to upload object {} to GCS", object.getKey(), e);
+        }
+        
         return null;
     }
 
     @Override
     public List<StoredObject> listObjects(final String bucket, final String keyPrefix) {
         return List.of();
-    }
-
-    public static InputStream downloadObjectIntoMemory(
-            String projectId, String bucket, String objectKey) {
-
-        Storage storage = StorageOptions.newBuilder()
-                                        .setProjectId(projectId)
-                                        .build()
-                                        .getService();
-        return new ByteArrayInputStream(storage.readAllBytes(bucket, objectKey));
     }
 }

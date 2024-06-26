@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import java.util.List;
 
 public interface OSClient {
-    
+
+    boolean createBucket(final String bucket);
+
     StoredObject getObject(final StoredObject object, final OutputStream os);
 
     StoredObject putObject(final StoredObject object, final InputStream is);
