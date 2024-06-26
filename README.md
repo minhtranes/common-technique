@@ -1,14 +1,14 @@
-## Overview
+# Overview
 
 A library to expose convenient API to work with lot of common technology such as ObjectStorage, File, Encryption,...
 
-# Object Storage
+# Object Storage Client
 The target of this implementation is providing the convenient interface that work with common object storage such as AWS S3, GCS, Azure Blob Storage.
 
 During boot up, a single bean of this implementation.
 
-# How to use?
-## Minio Object Storage
+## How to use?
+### Minio Object Storage
 1. Configuration
 
 ```yaml
@@ -46,7 +46,7 @@ class OSConfiguration {
 
 Then we can use the bean `minio` in anywhere of your code by using `@Autowired` to inject the client bean
 
-## AWS S3
+### AWS S3
 1. Configuration
 
 ```yaml
@@ -84,7 +84,7 @@ class OSConfiguration {
 
 Then we can use the bean `s3` in anywhere of your code by using `@Autowired` to inject the client bean
 
-## Google Cloud Storage
+### Google Cloud Storage
 1. Configuration
 
 ```yaml
