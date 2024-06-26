@@ -14,5 +14,7 @@ public interface OSClient {
 
     StoredObject putObject(final StoredObject object, final InputStream is);
 
+    boolean deleteObject(StoredObject object);
+
     public List<StoredObject> listObjects(final String bucket, final String keyPrefix);
 }

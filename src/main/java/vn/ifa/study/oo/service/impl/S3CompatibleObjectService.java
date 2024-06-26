@@ -185,4 +185,9 @@ public class S3CompatibleObjectService implements OSClient {
 
         return null;
     }
+
+    @Override
+    public boolean deleteObject(final StoredObject object) {
+        return false;
+    }
 }
