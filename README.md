@@ -86,11 +86,17 @@ Then we can use the bean `s3` in anywhere of your code by using `@Autowired` to 
 
 ### Google Cloud Storage
 1. Configuration
-
+Go to `application.yml` and add following configuration
 ```yaml
 gcs:
     projectId: project-id-123
 ```
+Add environment variable `GOOGLE_APPLICATION_CREDENTIALS` to point to the the key file generated from Google Cloud Console IAM
+
+```yaml
+export GOOGLE_APPLICATION_CREDENTIALS=/opt/app/config/splendid-sonar-174914-c483e3e6fb4f.json
+```
+
 2. Initialize the client bean
 
 Configure the gcs client bean
@@ -113,7 +119,7 @@ class OSConfiguration {
     }
 
     @Bean
-    OSClient s3() {
+    OSClient gcs() {
         return OSClientBuilder.gcs(properties());
     }
 }
