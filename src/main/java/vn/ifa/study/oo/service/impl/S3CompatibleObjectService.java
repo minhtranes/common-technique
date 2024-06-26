@@ -23,8 +23,8 @@ public class S3CompatibleObjectService implements OSClient {
 
     private MinioClient minioInstance;
 
-    S3CompatibleObjectService(S3CompatibleProperties props){
-        this.props=props;
+    S3CompatibleObjectService(S3CompatibleProperties props) {
+        this.props = props;
     }
 
     private boolean bucketExists(final String bucket) {
@@ -40,6 +40,7 @@ public class S3CompatibleObjectService implements OSClient {
         return false;
     }
 
+    @Override
     public boolean createBucket(final String bucket) {
 
         try {
@@ -73,6 +74,7 @@ public class S3CompatibleObjectService implements OSClient {
      *               will contains all byte array of the object
      * @return null if reading failed
      */
+    @Override
     public StoredObject getObject(final StoredObject object, final OutputStream os) {
 
         GetObjectArgs arg = GetObjectArgs.builder()
@@ -102,6 +104,7 @@ public class S3CompatibleObjectService implements OSClient {
         return null;
     }
 
+    @Override
     public List<StoredObject> listObjects(final String bucket, final String keyPrefix) {
 
         return listObjects(bucket, keyPrefix, false);
@@ -162,6 +165,7 @@ public class S3CompatibleObjectService implements OSClient {
 
     }
 
+    @Override
     public StoredObject putObject(final StoredObject object, final InputStream is) {
 
         String bucket = object.getBucket() == null ? props.getDefaultBucket() : object.getBucket();
@@ -188,6 +192,17 @@ public class S3CompatibleObjectService implements OSClient {
 
     @Override
     public boolean deleteObject(final StoredObject object) {
+
+        try {
+            final RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
+                                                                      .bucket(object.getBucket())
+                                                                      .object(object.getKey())
+                                                                      .build();
+            minioClient().removeObject(removeObjectArgs);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to delete object {} to remote storage at bucket {}", object.getKey(), object.getBucket(), e);
+        }
         return false;
     }
 }
