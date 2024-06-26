@@ -31,6 +31,9 @@ public class GCSObjectService implements OSClient {
 
     @Override
     public boolean createBucket(final String bucket) {
+
+        log.info("Create bucket [{}] in GCS", bucket);
+
         return false;
     }
 
