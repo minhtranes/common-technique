@@ -44,7 +44,7 @@ public class S3CompatibleObjectService implements OSClient {
     public boolean createBucket(final String bucket) {
 
         try {
-
+            log.info("Create bucket [{}] from S3 OS", bucket);
             if (bucketExists(bucket)) {
                 return true;
             }
@@ -76,6 +76,8 @@ public class S3CompatibleObjectService implements OSClient {
      */
     @Override
     public StoredObject getObject(final StoredObject object, final OutputStream os) {
+
+        log.info("Get object [{}] from S3 OS", object.getKey());
 
         GetObjectArgs arg = GetObjectArgs.builder()
                                          .bucket(object.getBucket() == null ? props.getDefaultBucket() : object.getBucket())
@@ -170,6 +172,8 @@ public class S3CompatibleObjectService implements OSClient {
 
         String bucket = object.getBucket() == null ? props.getDefaultBucket() : object.getBucket();
 
+        log.info("Put object [{}] into S3 OS", object.getKey());
+
         if (!createBucket(bucket)) {
             return null;
         }
@@ -194,6 +198,7 @@ public class S3CompatibleObjectService implements OSClient {
     public boolean deleteObject(final StoredObject object) {
 
         try {
+            log.info("Delete object [{}] from S3 OS", object.getKey());
             final RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                                                                       .bucket(object.getBucket())
                                                                       .object(object.getKey())
