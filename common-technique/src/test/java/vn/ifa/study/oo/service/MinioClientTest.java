@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -33,6 +34,8 @@ import java.security.NoSuchAlgorithmException;
 class MinioClientTest {
     private static final String CONTAINER_IMAGE = "minio/minio:RELEASE.2023-09-04T19-57-37Z";
     private static final String BUCKET = "test-bucket";
+    private static final String FILE_RESOURCE_PATH = "classpath:my_kids.jpg";
+    private static final String OBJECT_KEY = "my_kids.jpg";
     private OSClient minio;
 
     @Container
@@ -70,12 +73,12 @@ class MinioClientTest {
                                              .bucket(BUCKET)
                                              .build());
 
-        final File imageFile = loadFileFromResource("classpath:my_kids.jpg");
+        final File imageFile = loadFileFromResource(FILE_RESOURCE_PATH);
 
         log.info("Upload a test image into bucket {}", BUCKET);
         minioClient.putObject(PutObjectArgs.builder()
                                            .bucket(BUCKET)
-                                           .object("my_kids.jpg")
+                                           .object(OBJECT_KEY)
                                            .stream(Files.newInputStream(imageFile.toPath(), StandardOpenOption.READ), imageFile.length(), -1)
                                            .build());
 
@@ -91,11 +94,21 @@ class MinioClientTest {
         return ResourceUtils.getFile(resourcePath);
     }
 
-//    @Test
-//    void putObject() {
-//    }
-//
-//    @Test
-//    void deleteObject() {
-//    }
+    @Test
+    void putObject() throws IOException {
+        final File imageFile = loadFileFromResource(FILE_RESOURCE_PATH);
+
+        minio.putObject(StoredObject.builder()
+                                    .bucket(BUCKET)
+                                    .key(OBJECT_KEY)
+                                    .build(), Files.newInputStream(imageFile.toPath(), StandardOpenOption.READ));
+    }
+
+    @Test
+    void deleteObject() {
+        minio.deleteObject(StoredObject.builder()
+                                       .bucket(BUCKET)
+                                       .key(OBJECT_KEY)
+                                       .build());
+    }
 }
