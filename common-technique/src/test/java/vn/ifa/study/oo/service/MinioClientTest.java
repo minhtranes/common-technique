@@ -87,7 +87,9 @@ class MinioClientTest {
                                     .bucket(BUCKET)
                                     .key("my_kids.jpg")
                                     .build(), os);
-        log.info("Get object from bucket {} with size {}", BUCKET, os.size());
+        final int size = os.size();
+        log.info("Get object from bucket {} with size {}", BUCKET, size);
+        assert size == imageFile.length();
     }
 
     private File loadFileFromResource(String resourcePath) throws FileNotFoundException {
