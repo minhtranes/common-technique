@@ -1,5 +1,5 @@
 spring.application.name: common-technique-test-support
 minio:
-    endpoint: https://tst-fileservice-intodigital.spsvietnam.vn
-    clientKey: minioadmin
-    clientSecret: minioadmin
+    endpoint: ${MINIO_ENDPOINT:https://localhost:9000}
+    clientKey: ${MINIO_CLIENT_KEY:minio}
+    clientSecret: ${MINIO_CLIENT_SECRET:minio}
