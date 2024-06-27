@@ -3,3 +3,5 @@ minio:
     endpoint: ${MINIO_ENDPOINT:https://localhost:9000}
     clientKey: ${MINIO_CLIENT_KEY:minio}
     clientSecret: ${MINIO_CLIENT_SECRET:minio}
+gcs:
+    projectId: ${GCS_PROJECT_ID:project}
