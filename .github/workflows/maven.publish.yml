@@ -31,13 +31,19 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: 3.8.2
+
     - name: Extract Maven project version
+      working-directory: ./common-technique
       run: echo ::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout)
       id: project_version
 
     - name: Build with Maven
       working-directory: ./common-technique
-      run: mvn -B package --file pom.xml
+      run: mvn clean install -Dmaven.test.skip=true --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
       working-directory: ./common-technique
