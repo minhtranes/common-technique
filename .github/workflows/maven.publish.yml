@@ -64,12 +64,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
 
     - name: Upload artifact
-      working-directory: ./common-technique
+      working-directory: ./common-techniqu
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/common-technique-${{ steps.project_version.outputs.version }}.jar
+        asset_path: ./common-technique/target/common-technique-${{ steps.project_version.outputs.version }}.jar
         asset_name: common-technique-${{ steps.project_version.outputs.version }}.jar
         asset_content_type: application/jar
