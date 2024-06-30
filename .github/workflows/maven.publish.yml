@@ -10,6 +10,7 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
+  WORKING_DIR: ./common-technique
 
 jobs:
   build_connector:
@@ -37,16 +38,16 @@ jobs:
         maven-version: 3.8.2
 
     - name: Extract Maven project version
-      working-directory: ./common-technique
+      working-directory: ${{ env.WORKING_DIR }}
       run: echo ::set-output name=version::$(mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout)
       id: project_version
 
     - name: Build with Maven
-      working-directory: ./common-technique
+      working-directory: ${{ env.WORKING_DIR }}
       run: mvn install -Dmaven.test.skip=true
 
     - name: Publish to GitHub Packages Apache Maven
-      working-directory: ./common-technique
+      working-directory: ${{ env.WORKING_DIR }}
       run: mvn deploy -Dmaven.test.skip=true -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -59,7 +60,7 @@ jobs:
         prerelease: false
         release_name: v${{ steps.project_version.outputs.version }}
         tag_name: ${{ github.ref }}
-        body_path: CHANGELOG.md
+        body_path: ${{ env.WORKING_DIR }}/CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
 
@@ -69,6 +70,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./common-technique/target/common-technique-${{ steps.project_version.outputs.version }}.jar
+        asset_path: ${{ env.WORKING_DIR }}/target/common-technique-${{ steps.project_version.outputs.version }}.jar
         asset_name: common-technique-${{ steps.project_version.outputs.version }}.jar
         asset_content_type: application/jar
