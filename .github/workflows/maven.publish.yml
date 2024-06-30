@@ -64,7 +64,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
 
     - name: Upload artifact
-      working-directory: ./common-techniqu
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PACKAGE_REGISTRY_TOKEN }}
