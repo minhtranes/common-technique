@@ -1,4 +1,4 @@
-package vn.ifa.study.oo;
+package vn.ifa.study.oo.model;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +12,8 @@ public class StoredObject {
     private String key;
     private long size;
     private int version;
-    /** Should contain less than 5MB size object */
+    /**
+     * Should contain less than 5MB size object
+     */
     private byte[] smallContent;
 }
