@@ -10,7 +10,7 @@
     </parent>
     <groupId>vn.ifa.study</groupId>
     <artifactId>common-technique</artifactId>
-    <version>0.0.14</version>
+    <version>0.0.15</version>
     <name>common-technique</name>
     <description>A very common utilities, shared technique of microservice implementation. NO business included
     </description>
